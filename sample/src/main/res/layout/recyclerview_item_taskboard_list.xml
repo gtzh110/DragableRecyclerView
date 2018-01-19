@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="30dp">
+
+    <RelativeLayout
+        android:gravity="center_vertical"
+        android:id="@+id/layout_list_name"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="#ff1234">
+
+        <TextView
+            android:layout_alignParentLeft="true"
+            android:text="TEST"
+            android:id="@+id/tv_list_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:layout_alignParentRight="true"
+            android:id="@+id/btn_more"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginRight="10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/account" />
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/task_list_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:layout_marginTop="30dp"
+        android:minHeight="40dp"/>
+
+</FrameLayout>
