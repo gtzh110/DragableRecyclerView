@@ -4,17 +4,17 @@
     android:id="@+id/layout_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
     android:clipChildren="false">
 
 
     <board.PagerRecyclerView
+        android:background="#F5F8FA"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         android:id="@+id/rv_lists"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="55dp"
         android:clipToPadding="false"
         android:scrollbars="horizontal"
         app:RecyclerViewPager_singlePageFling="true"

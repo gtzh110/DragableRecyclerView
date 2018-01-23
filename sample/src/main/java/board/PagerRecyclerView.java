@@ -220,7 +220,7 @@ public class PagerRecyclerView extends RecyclerView {
     }
 
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (ev.getAction() == 0) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             int centerXChildPosition;
             if (getLayoutManager().canScrollHorizontally()) {
                 centerXChildPosition = RecyclerviewUtils.getCenterXChildPosition(this);
@@ -247,7 +247,7 @@ public class PagerRecyclerView extends RecyclerView {
     }
 
     public boolean onTouchEvent(MotionEvent e) {
-        if (e.getAction() == 2 && this.mCurView != null) {
+        if (e.getAction() == MotionEvent.ACTION_MOVE && this.mCurView != null) {
             this.mMaxLeftWhenDragging = Math.max(this.mCurView.getLeft(), this.mMaxLeftWhenDragging);
             this.mMaxTopWhenDragging = Math.max(this.mCurView.getTop(), this.mMaxTopWhenDragging);
             this.mMinLeftWhenDragging = Math.min(this.mCurView.getLeft(), this.mMinLeftWhenDragging);

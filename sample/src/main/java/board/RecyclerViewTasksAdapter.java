@@ -1,6 +1,8 @@
 package board;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.text.TextUtils;
@@ -67,7 +69,9 @@ public class RecyclerViewTasksAdapter extends Adapter<RecyclerViewTasksAdapter.V
 //                }
 //            });
 //        }
-        holder.tv_title.setText(mData.get(position));
+        holder.tv_title.setText(mData.get(position)+"检查备件是否合格检查备件是否合格检查备件是否合格检查备件是否合格检查备件是否合格检查备件是否合格");
+        holder.tv_title.setTextColor(Color.parseColor("#7A8A99"));
+        holder.tv_title.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
         holder.itemView.setOnLongClickListener(new OnLongClickListener() {
             public boolean onLongClick(View v) {
 //                if (!NetUtils.isNetworkAvailable()) {

@@ -65,9 +65,9 @@ public class RecyclerViewPagerAdapter<VH extends ViewHolder> extends Adapter<VH>
     }
 
     public void onBindViewHolder(VH holder, int position) {
-        LayoutParams lp;
+//        LayoutParams lp;
         this.mAdapter.onBindViewHolder(holder, position);
-        View itemView = holder.itemView;
+//        View itemView = holder.itemView;
 
     }
 

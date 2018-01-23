@@ -20,6 +20,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -66,7 +67,7 @@ public class RecyclerViewListsAdapter extends Adapter<RecyclerViewListsAdapter.V
 
                 return;
             }
-            this.tv_title = (TextView) convertView.findViewById(R.id.tv_list_name);
+            this.tv_title = (TextView) convertView.findViewById(R.id.tv_stage_name);
             this.layout_title = (RelativeLayout) convertView.findViewById(R.id.layout_list_name);
             this.rv_tasks = (RecyclerView) convertView.findViewById(R.id.task_list_rv);
             this.btn_more = (ImageView) convertView.findViewById(R.id.btn_more);
@@ -103,14 +104,9 @@ public class RecyclerViewListsAdapter extends Adapter<RecyclerViewListsAdapter.V
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (this.mFooterView == null || viewType != TYPE_FOOTER) {
             View itemView = this.mInflater.inflate(R.layout.recyclerview_item_taskboard_list, parent, false);
-            ViewGroup.LayoutParams lp;
-            if (itemView.getLayoutParams() == null) {
-                lp = new ViewGroup.LayoutParams(itemWidth, -2);
-            } else {
-                lp = itemView.getLayoutParams();
-                lp.width = itemWidth;
-                lp.height = -2;
-            }
+            ViewGroup.LayoutParams lp = itemView.getLayoutParams();
+            lp.width = itemWidth;
+            lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             itemView.setLayoutParams(lp);
             return new ViewHolder(itemView, TYPE_DATA);
         }
@@ -134,6 +130,8 @@ public class RecyclerViewListsAdapter extends Adapter<RecyclerViewListsAdapter.V
                     taskList.add(mData.get(position) + i);
                 }
                 holder.rv_tasks.setLayoutManager(new LinearLayoutManager(this.mContext));
+//                holder.rv_tasks.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 900));
+//                holder.rv_tasks.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
                 RecyclerViewTasksAdapter tasksAdapter = new RecyclerViewTasksAdapter(mContext, taskList);
                 holder.rv_tasks.setAdapter(tasksAdapter);
                 setOnTitleDrag(holder);
