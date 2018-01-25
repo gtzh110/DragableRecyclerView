@@ -1,4 +1,4 @@
-package board;
+package FscBoardView;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,6 +10,8 @@ import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.view.View.OnLayoutChangeListener;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.woxthebox.draglistview.sample.R;
 
@@ -18,10 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import drag.DragHelper;
-import drag.DragLayout;
-
-public class ProjectTaskBoardActivity extends Activity implements OnListDragAndDropListener {
+public class ServiceStageBoardActivity extends Activity implements OnListDragAndDropListener {
     public static final float DRAGGING_SCALE = 0.5f;
     public static final float FULL_SCALE = 1.0f;
     public static final int TYPE_FROM_ADD = 5;
@@ -55,21 +54,21 @@ public class ProjectTaskBoardActivity extends Activity implements OnListDragAndD
         }
 
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            int childCount = ProjectTaskBoardActivity.this.mRecyclerView.getChildCount();
-            int padding = (ProjectTaskBoardActivity.this.mRecyclerView.getWidth() - ProjectTaskBoardActivity.this.mRecyclerView.getChildAt(0).getWidth()) / ProjectTaskBoardActivity.TYPE_FROM_MSG;
-            for (int j = 0; j < childCount; j += ProjectTaskBoardActivity.TYPE_FROM_PROJECT_LIST) {
+            int childCount = mRecyclerView.getChildCount();
+            int padding = (mRecyclerView.getWidth() - mRecyclerView.getChildAt(0).getWidth()) / ServiceStageBoardActivity.TYPE_FROM_MSG;
+            for (int j = 0; j < childCount; j += ServiceStageBoardActivity.TYPE_FROM_PROJECT_LIST) {
                 View v = recyclerView.getChildAt(j);
                 float rate = 0.0f;
                 if (v.getLeft() <= padding) {
                     if (v.getLeft() >= padding - v.getWidth()) {
-                        rate = (((float) (padding - v.getLeft())) * ProjectTaskBoardActivity.FULL_SCALE) / ((float) v.getWidth());
+                        rate = (((float) (padding - v.getLeft())) * ServiceStageBoardActivity.FULL_SCALE) / ((float) v.getWidth());
                     } else {
-                        rate = ProjectTaskBoardActivity.FULL_SCALE;
+                        rate = ServiceStageBoardActivity.FULL_SCALE;
                     }
-                    v.setScaleX(ProjectTaskBoardActivity.FULL_SCALE - (rate * 0.1f));
+                    v.setScaleX(ServiceStageBoardActivity.FULL_SCALE - (rate * 0.1f));
                 } else {
                     if (v.getLeft() <= recyclerView.getWidth() - padding) {
-                        rate = (((float) ((recyclerView.getWidth() - padding) - v.getLeft())) * ProjectTaskBoardActivity.FULL_SCALE) / ((float) v.getWidth());
+                        rate = (((float) ((recyclerView.getWidth() - padding) - v.getLeft())) * ServiceStageBoardActivity.FULL_SCALE) / ((float) v.getWidth());
                     }
                     v.setScaleX(0.9f + (rate * 0.1f));
                 }
@@ -79,43 +78,51 @@ public class ProjectTaskBoardActivity extends Activity implements OnListDragAndD
 
     private PagerRecyclerView mRecyclerView;
     private ScaleHelper mScaleHelper;
-    private String movingListId;
-    public String projectId;
-    public String projectName;
-    public String teamId;
-    public int type_from;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_taskboard);
-        this.mLayoutMain = (DragLayout) findViewById(R.id.layout_main);
-        this.mRecyclerView = (PagerRecyclerView) findViewById(R.id.rv_lists);
-        this.mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        this.mRecyclerView.setHasFixedSize(true);
-        this.mRecyclerView.setFlingFactor(0.1f);
+        initView();
+    }
+
+    private void initView() {
+        mLayoutMain = (DragLayout) findViewById(R.id.layout_main);
+        mRecyclerView = (PagerRecyclerView) findViewById(R.id.rv_lists);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setFlingFactor(0.1f);
+        ((TextView) findViewById(R.id.title)).setText("服务阶段名称");
+        findViewById(R.id.seek).setVisibility(View.VISIBLE);
+        findViewById(R.id.button).setVisibility(View.VISIBLE);
+        ((ImageView) findViewById(R.id.button)).setImageResource(R.drawable.team_member);
+        initAllAdapter();
+    }
+
+    /**
+     * 初始化缩放、拖拽、adapter
+     */
+    private void initAllAdapter() {
         for (int i = 0; i < 10; i++) {
             mData.add("List ======= " + i);
         }
-        this.mAdapter = new RecyclerViewListsAdapter(this, this.mData);
-        this.mAdapter.setFooterView(getLayoutInflater().inflate(R.layout.recyclerview_footer_addlist, null, false));
-        this.mRecyclerView.setAdapter(this.mAdapter);
-        this.mItemTouchHelper = new ItemTouchHelper(new ListItemTouchHelperCallback(this.mAdapter));
-        this.mItemTouchHelper.attachToRecyclerView(this.mRecyclerView);
-        this.mRecyclerView.addOnPageChangedListener(this.mOnPagerChangedListener);
-        this.mRecyclerView.addOnLayoutChangeListener(this.mOnLayoutChangedListener);
-        this.mRecyclerView.addOnScrollListener(this.mOnScrollListener);
-        this.mDragHelper = new DragHelper(this);
-        this.mDragHelper.bindHorizontalRecyclerView(this.mRecyclerView);
-        this.mLayoutMain.setDragHelper(this.mDragHelper);
-        this.mScaleHelper = new ScaleHelper(this);
-        this.mScaleHelper.setContentView(this.mLayoutMain);
-        this.mScaleHelper.setHorizontalView(this.mRecyclerView);
-        this.projectId = "120";
-        this.projectName = "test";
+        mAdapter = new RecyclerViewListsAdapter(this, mData);
+        mAdapter.setFooterView(getLayoutInflater().inflate(R.layout.recyclerview_footer_addlist, null, false));
+        mRecyclerView.setAdapter(mAdapter);
+        mItemTouchHelper = new ItemTouchHelper(new ListItemTouchHelperCallback(mAdapter));
+        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
+        mRecyclerView.addOnPageChangedListener(mOnPagerChangedListener);
+        mRecyclerView.addOnLayoutChangeListener(mOnLayoutChangedListener);
+        mRecyclerView.addOnScrollListener(mOnScrollListener);
+        mDragHelper = new DragHelper(this);
+        mDragHelper.bindHorizontalRecyclerView(mRecyclerView);
+        mLayoutMain.setDragHelper(mDragHelper);
+        mScaleHelper = new ScaleHelper(this);
+        mScaleHelper.setContentView(mLayoutMain);
+        mScaleHelper.setHorizontalView(mRecyclerView);
     }
 
     public DragHelper getDragHelper() {
-        return this.mDragHelper;
+        return mDragHelper;
     }
 
     protected void onNewIntent(Intent intent) {
@@ -129,8 +136,8 @@ public class ProjectTaskBoardActivity extends Activity implements OnListDragAndD
 
 
     public void scrollRecyclerView(int position) {
-        if (this.mRecyclerView != null) {
-            this.mRecyclerView.smoothScrollToPosition(position);
+        if (mRecyclerView != null) {
+            mRecyclerView.smoothScrollToPosition(position);
         }
     }
 
@@ -161,17 +168,17 @@ public class ProjectTaskBoardActivity extends Activity implements OnListDragAndD
     }
 
     public void onStartDrag(ViewHolder viewHolder, int fromPosition) {
-        this.mScaleHelper.startScaleModel();
-        this.mItemTouchHelper.startDrag(viewHolder);
+        mScaleHelper.startScaleModel();
+        mItemTouchHelper.startDrag(viewHolder);
 //        List movingList = mData.get(fromPosition);
 //        if (movingList != null) {
-//            this.movingListId = movingList.getListId();
-        this.mFromPosition = fromPosition;
+//            movingListId = movingList.getListId();
+        mFromPosition = fromPosition;
 //        }
     }
 
     public void onEndDrag(int toPosition) {
-        this.mScaleHelper.stopScaleModel(mAdapter.itemWidth);
-        this.mRecyclerView.scrollToPosition(toPosition);
+        mScaleHelper.stopScaleModel(mAdapter.itemWidth);
+        mRecyclerView.scrollToPosition(toPosition);
     }
 }

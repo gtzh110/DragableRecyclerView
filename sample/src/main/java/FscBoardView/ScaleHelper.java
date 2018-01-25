@@ -1,4 +1,4 @@
-package board;
+package FscBoardView;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
@@ -34,8 +34,8 @@ public class ScaleHelper {
             this.mContentView.getLayoutParams().height = scale * height;
             this.horizontalView.getLayoutParams().height = scale * height;
             this.horizontalView.getLayoutParams().width = scale * width;
-            this.horizontalView.setScaleX(ProjectTaskBoardActivity.FULL_SCALE / ((float) this.scale));
-            this.horizontalView.setScaleY(ProjectTaskBoardActivity.FULL_SCALE / ((float) this.scale));
+            this.horizontalView.setScaleX(ServiceStageBoardActivity.FULL_SCALE / ((float) this.scale));
+            this.horizontalView.setScaleY(ServiceStageBoardActivity.FULL_SCALE / ((float) this.scale));
             this.horizontalView.setPivotX(0.0f);
             this.horizontalView.setPivotY(0.0f);
             for (View view : this.verticalViewList) {
@@ -62,8 +62,8 @@ public class ScaleHelper {
                 view.getLayoutParams().width = itemWidth;
                 view.requestLayout();
             }
-            this.horizontalView.setScaleX(ProjectTaskBoardActivity.FULL_SCALE);
-            this.horizontalView.setScaleY(ProjectTaskBoardActivity.FULL_SCALE);
+            this.horizontalView.setScaleX(ServiceStageBoardActivity.FULL_SCALE);
+            this.horizontalView.setScaleY(ServiceStageBoardActivity.FULL_SCALE);
             if (this.horizontalView instanceof PagerRecyclerView) {
                 ((PagerRecyclerView) this.horizontalView).setFlingFactor(this.normalFlingFactor);
                 ((PagerRecyclerView) this.horizontalView).setSinglePageFling(true);

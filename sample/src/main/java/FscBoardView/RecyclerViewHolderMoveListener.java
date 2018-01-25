@@ -1,4 +1,4 @@
-package board;
+package FscBoardView;
 
 public interface RecyclerViewHolderMoveListener {
     void onItemClear();

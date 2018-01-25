@@ -27,7 +27,7 @@
 
         </activity>
 
-        <activity android:name="board.ProjectTaskBoardActivity">
+        <activity android:name="FscBoardView.ServiceStageBoardActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,4 +1,4 @@
-package drag;
+package FscBoardView;
 
 import android.content.Context;
 import android.util.AttributeSet;

@@ -1,20 +1,15 @@
 package util;
 
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
-import android.support.annotation.NonNull;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.MeasureSpec;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
 
 import com.woxthebox.draglistview.sample.R;
 
-import board.ProjectTaskBoardActivity;
+import FscBoardView.ServiceStageBoardActivity;
 
 public class UiUtil {
     public static int getToolbarHeight(Context context) {
@@ -25,15 +20,15 @@ public class UiUtil {
     }
 
     public static int sp2px(Context context, float spValue) {
-        return (int) ((spValue * context.getResources().getDisplayMetrics().scaledDensity) + ProjectTaskBoardActivity.DRAGGING_SCALE);
+        return (int) ((spValue * context.getResources().getDisplayMetrics().scaledDensity) + ServiceStageBoardActivity.DRAGGING_SCALE);
     }
 
     public static int dp2px(Context context, float dpValue) {
-        return (int) ((dpValue * context.getResources().getDisplayMetrics().density) + ProjectTaskBoardActivity.DRAGGING_SCALE);
+        return (int) ((dpValue * context.getResources().getDisplayMetrics().density) + ServiceStageBoardActivity.DRAGGING_SCALE);
     }
 
     public static int px2dp(Context context, float pxValue) {
-        return (int) ((pxValue / context.getResources().getDisplayMetrics().density) + ProjectTaskBoardActivity.DRAGGING_SCALE);
+        return (int) ((pxValue / context.getResources().getDisplayMetrics().density) + ServiceStageBoardActivity.DRAGGING_SCALE);
     }
 
     public static int[] getViewMeasuredWidthAndHeight(View view) {
@@ -47,8 +42,26 @@ public class UiUtil {
         return outRect.height();
     }
 
+
+
     public static int getScreenWidth(Activity context) {
         return context.getResources().getDisplayMetrics().widthPixels;
+    }
+
+    public static int getScreenHeight(Activity context) {
+        return context.getResources().getDisplayMetrics().heightPixels;
+    }
+
+    public static int getStatusBarHeight(Context context){
+        int statusBarHeight = -1;
+        //获取status_bar_height资源的ID
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            //根据资源ID获取尺寸值
+            statusBarHeight = context.getResources().getDimensionPixelSize(resourceId);
+
+        }
+        return statusBarHeight;
     }
 
 //    public static int getScreenWidth(){

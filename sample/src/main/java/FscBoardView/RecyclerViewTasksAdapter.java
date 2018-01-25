@@ -1,48 +1,53 @@
-package board;
+package FscBoardView;
 
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.woxthebox.draglistview.sample.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import dont_need_copy.BottomDialogInFieldJobMain;
+import util.UiUtil;
 
 public class RecyclerViewTasksAdapter extends Adapter<RecyclerViewTasksAdapter.ViewHolder> {
-    private ProjectTaskBoardActivity mActivity;
+    private ServiceStageBoardActivity mActivity;
     private List<String> mData;
     private int mDragPosition;
     private boolean mHideDragItem;
     private LayoutInflater mInflater;
     private boolean mOnBind = false;
-//    private OnItemClickListener mOnItemClickListener;
+    //    private OnItemClickListener mOnItemClickListener;
+    private int itemViewHeight;
 
     public static class ViewHolder extends android.support.v7.widget.RecyclerView.ViewHolder {
         TextView tv_title;
+        ImageView iv_task_icon;
 
         public ViewHolder(View itemView, Activity activity) {
             super(itemView);
             this.tv_title = (TextView) itemView.findViewById(R.id.tv_title);
+            iv_task_icon = (ImageView) itemView.findViewById(R.id.task_icon);
 
         }
     }
 
-    public RecyclerViewTasksAdapter(ProjectTaskBoardActivity activity, List data) {
+    public RecyclerViewTasksAdapter(ServiceStageBoardActivity activity, List data) {
         this.mActivity = activity;
         this.mData = data;
         this.mInflater = LayoutInflater.from(activity);
@@ -69,7 +74,13 @@ public class RecyclerViewTasksAdapter extends Adapter<RecyclerViewTasksAdapter.V
 //                }
 //            });
 //        }
-        holder.tv_title.setText(mData.get(position)+"检查备件是否合格检查备件是否合格检查备件是否合格检查备件是否合格检查备件是否合格检查备件是否合格");
+        RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
+        if (position == 0) {
+            layoutParams.setMargins(0, 0, 0, 0);
+        } else {
+            layoutParams.setMargins(0, UiUtil.dp2px(mActivity, 5), 0, 0);
+        }
+        holder.tv_title.setText(mData.get(position) + "");
         holder.tv_title.setTextColor(Color.parseColor("#7A8A99"));
         holder.tv_title.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
         holder.itemView.setOnLongClickListener(new OnLongClickListener() {
@@ -81,6 +92,32 @@ public class RecyclerViewTasksAdapter extends Adapter<RecyclerViewTasksAdapter.V
                 RecyclerViewTasksAdapter.this.mActivity.getDragHelper().drag(v, position);
 //                }
                 return true;
+            }
+        });
+        holder.iv_task_icon.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<JSONObject> arrayList = new ArrayList();
+                for (int i = 0; i < 3; i++) {
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("reason", "test" + i);
+                        jsonObject.put("id", i);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    arrayList.add(jsonObject);
+                }
+                final BottomDialogInFieldJobMain reasonsOfReturn = (BottomDialogInFieldJobMain) mActivity.findViewById(R.id.reasons_layout);
+                mActivity.findViewById(R.id.title).setVisibility(View.VISIBLE);
+                reasonsOfReturn.initDialog(arrayList);
+                reasonsOfReturn.setOnItemClickListener(new BottomDialogInFieldJobMain.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(String id) {
+                        reasonsOfReturn.setVisibility(View.GONE);
+                    }
+                });
+                reasonsOfReturn.setVisibility(View.VISIBLE);
             }
         });
 

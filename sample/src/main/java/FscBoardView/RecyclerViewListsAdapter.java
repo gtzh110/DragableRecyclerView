@@ -1,26 +1,14 @@
-package board;
+package FscBoardView;
 
-import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Build.VERSION;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
-import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -28,13 +16,14 @@ import android.widget.TextView;
 
 import com.woxthebox.draglistview.sample.R;
 
-import java.lang.ref.WeakReference;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
+import dont_need_copy.BottomDialogInFieldJobMain;
 import util.UiUtil;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
@@ -46,20 +35,24 @@ public class RecyclerViewListsAdapter extends Adapter<RecyclerViewListsAdapter.V
     public static final int ON_SUCCESS = 1;
     public static final int TYPE_DATA = 0;
     public static final int TYPE_FOOTER = 1;
-    private ProjectTaskBoardActivity mContext;
+    private ServiceStageBoardActivity mContext;
     private List<String> mData;
     //    private Map<String, List<String>> mDataMap;
     private View mFooterView;
     private LayoutInflater mInflater;
     private PopupWindow popupWindow;
     public int itemWidth;
-
+    public int maxContentViewHeight;
+    public int minContentViewHeight;
+    public int avgContentViewHeight;
+    List<String> taskList = new ArrayList<>();
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements RecyclerViewHolderMoveListener {
         ImageView btn_more;
         RelativeLayout layout_title;
         RecyclerView rv_tasks;
         TextView tv_title;
+        TextView tv_create;
 
         public ViewHolder(View convertView, int itemType) {
             super(convertView);
@@ -68,6 +61,7 @@ public class RecyclerViewListsAdapter extends Adapter<RecyclerViewListsAdapter.V
                 return;
             }
             this.tv_title = (TextView) convertView.findViewById(R.id.tv_stage_name);
+            this.tv_create = (TextView) convertView.findViewById(R.id.tv_create);
             this.layout_title = (RelativeLayout) convertView.findViewById(R.id.layout_list_name);
             this.rv_tasks = (RecyclerView) convertView.findViewById(R.id.task_list_rv);
             this.btn_more = (ImageView) convertView.findViewById(R.id.btn_more);
@@ -79,17 +73,23 @@ public class RecyclerViewListsAdapter extends Adapter<RecyclerViewListsAdapter.V
         }
 
         public void onItemClear() {
-            this.itemView.setAlpha(ProjectTaskBoardActivity.FULL_SCALE);
+            this.itemView.setAlpha(ServiceStageBoardActivity.FULL_SCALE);
             this.itemView.setRotation(0.0f);
         }
     }
 
-    public RecyclerViewListsAdapter(ProjectTaskBoardActivity context, List<String> data) {
+    public RecyclerViewListsAdapter(ServiceStageBoardActivity context, List<String> data) {
         this.mContext = context;
         this.mData = data;
 //        this.mDataMap = dataMap;
         this.mInflater = LayoutInflater.from(context);
         itemWidth = UiUtil.getScreenWidth(context) - UiUtil.dp2px(context, 50);
+        maxContentViewHeight = UiUtil.getScreenHeight(mContext) - UiUtil.getStatusBarHeight(mContext) - UiUtil.dp2px(mContext, 55 + 5);
+        minContentViewHeight = UiUtil.dp2px(mContext, 80 + 50 + 5 + 5 + 98);
+        avgContentViewHeight = UiUtil.dp2px(mContext, 93);
+        for (int i = 0; i < 20; i++) {
+            taskList.add("test" + i);
+        }
     }
 
     public View getFooterView() {
@@ -106,7 +106,7 @@ public class RecyclerViewListsAdapter extends Adapter<RecyclerViewListsAdapter.V
             View itemView = this.mInflater.inflate(R.layout.recyclerview_item_taskboard_list, parent, false);
             ViewGroup.LayoutParams lp = itemView.getLayoutParams();
             lp.width = itemWidth;
-            lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            lp.height = getVerticalRecyclerViewHeight(taskList.size());
             itemView.setLayoutParams(lp);
             return new ViewHolder(itemView, TYPE_DATA);
         }
@@ -118,23 +118,47 @@ public class RecyclerViewListsAdapter extends Adapter<RecyclerViewListsAdapter.V
         return new ViewHolder(this.mFooterView, TYPE_FOOTER);
     }
 
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         switch (getItemViewType(position)) {
             case TYPE_DATA:
 //                List list = this.mData.get(position);
-
-
                 holder.tv_title.setText(mData.get(position));
-                List<String> taskList = new ArrayList<>();
-                for (int i = 0; i < 10; i++) {
-                    taskList.add(mData.get(position) + i);
-                }
                 holder.rv_tasks.setLayoutManager(new LinearLayoutManager(this.mContext));
-//                holder.rv_tasks.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 900));
-//                holder.rv_tasks.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
                 RecyclerViewTasksAdapter tasksAdapter = new RecyclerViewTasksAdapter(mContext, taskList);
                 holder.rv_tasks.setAdapter(tasksAdapter);
                 setOnTitleDrag(holder);
+                holder.btn_more.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showPopupWindow(holder.btn_more);
+                    }
+                });
+                holder.tv_create.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ArrayList<JSONObject> arrayList = new ArrayList();
+                        for (int i = 0; i < 2; i++) {
+                            JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("reason", "test" + i);
+                                jsonObject.put("id", i);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            arrayList.add(jsonObject);
+                        }
+                        final BottomDialogInFieldJobMain reasonsOfReturn = (BottomDialogInFieldJobMain) mContext.findViewById(R.id.reasons_layout);
+                        mContext.findViewById(R.id.bottom_dialog_title).setVisibility(View.GONE);
+                        reasonsOfReturn.initDialog(arrayList);
+                        reasonsOfReturn.setOnItemClickListener(new BottomDialogInFieldJobMain.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(String id) {
+                                reasonsOfReturn.setVisibility(View.GONE);
+                            }
+                        });
+                        reasonsOfReturn.setVisibility(View.VISIBLE);
+                    }
+                });
 //                setOnItemClick(taskList, list.getProjectId(), tasksAdapter);
 //                setOnClickAddTask(holder);
 //                setOnAddTaskKeyboardListener(holder, list);
@@ -332,12 +356,6 @@ public class RecyclerViewListsAdapter extends Adapter<RecyclerViewListsAdapter.V
 //        return Constants.posAdd + TYPE_FOOTER;
 //    }
 
-    private void dismissPopupWindow(View button) {
-        button.setSelected(false);
-        if (this.popupWindow != null && this.popupWindow.isShowing()) {
-            this.popupWindow.dismiss();
-        }
-    }
 
 //    @TargetApi(21)
 //    private void showPopupWindow(View button, com.worktilecore.core.task.List list) {
@@ -610,5 +628,46 @@ public class RecyclerViewListsAdapter extends Adapter<RecyclerViewListsAdapter.V
 
     public void onItemDrop(int position) {
         this.mContext.onEndDrag(position);
+    }
+
+    private int getVerticalRecyclerViewHeight(int size) {
+        switch (size) {
+            case 0:
+                return minContentViewHeight;
+            case 1:
+                return minContentViewHeight + avgContentViewHeight;
+            case 2:
+                return minContentViewHeight + avgContentViewHeight * 2;
+            case 3:
+                return minContentViewHeight + avgContentViewHeight * 3;
+            default:
+                return maxContentViewHeight;
+        }
+    }
+
+    private void showPopupWindow(View btn_more) {
+        btn_more.setSelected(true);
+        View layout_popupWindow = View.inflate(this.mContext, R.layout.pop_up_window_layout, null);
+        if (this.popupWindow == null) {
+            this.popupWindow = new PopupWindow(layout_popupWindow, UiUtil.dp2px(mContext,130), ViewGroup.LayoutParams.WRAP_CONTENT);
+            this.popupWindow.setFocusable(true);
+            this.popupWindow.setOutsideTouchable(true);
+//            this.popupWindow.setElevation(this.mContext.getResources().getDimension(R.dimen.popwindow_elevation));
+//            this.popupWindow.setBackgroundDrawable(this.mContext.getResources().getDrawable(R.drawable.bg_popwindow));
+        }
+//        this.popupWindow.getContentView().findViewById(R.id.tv1).setOnClickListener(onClick(button, list));
+//        this.popupWindow.getContentView().findViewById(R.id.tv2).setOnClickListener(onClick(button, list));
+//        this.popupWindow.getContentView().findViewById(R.id.tv4).setOnClickListener(onClick(button, list));
+//        this.popupWindow.getContentView().findViewById(R.id.tv5).setOnClickListener(onClick(button, list));
+//        this.popupWindow.getContentView().findViewById(R.id.tv6).setOnClickListener(onClick(button, list));
+
+        this.popupWindow.showAsDropDown(btn_more, -(UiUtil.dp2px(mContext,130) - btn_more.getWidth()), TYPE_DATA);
+    }
+
+    private void dismissPopupWindow(View btn_more) {
+        btn_more.setSelected(false);
+        if (this.popupWindow != null && this.popupWindow.isShowing()) {
+            this.popupWindow.dismiss();
+        }
     }
 }

@@ -1,4 +1,4 @@
-package board;
+package FscBoardView;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -9,10 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.Adapter;
-import android.support.v7.widget.RecyclerView.LayoutManager;
-import android.support.v7.widget.RecyclerView.SmoothScroller.Action;
-import android.support.v7.widget.RecyclerView.State;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;

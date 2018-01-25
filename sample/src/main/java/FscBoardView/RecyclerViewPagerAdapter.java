@@ -1,15 +1,10 @@
-package board;
+package FscBoardView;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.AdapterDataObserver;
 import android.support.v7.widget.RecyclerView.ViewHolder;
-import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-
-import util.UiUtil;
 
 public class RecyclerViewPagerAdapter<VH extends ViewHolder> extends Adapter<VH> {
     Adapter<VH> mAdapter;

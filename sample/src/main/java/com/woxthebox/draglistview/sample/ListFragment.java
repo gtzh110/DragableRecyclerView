@@ -43,7 +43,7 @@ import com.woxthebox.draglistview.swipe.ListSwipeItem;
 
 import java.util.ArrayList;
 
-import board.ProjectTaskBoardActivity;
+import FscBoardView.ServiceStageBoardActivity;
 
 public class ListFragment extends Fragment {
 
@@ -151,7 +151,7 @@ public class ListFragment extends Fragment {
             case R.id.action_disable_drag:
 //                mDragListView.setDragEnabled(false);
 //                getActivity().supportInvalidateOptionsMenu();
-                Intent intent = new Intent(getActivity(), ProjectTaskBoardActivity.class);
+                Intent intent = new Intent(getActivity(), ServiceStageBoardActivity.class);
                 getActivity().startActivity(intent);
                 return true;
             case R.id.action_enable_drag:

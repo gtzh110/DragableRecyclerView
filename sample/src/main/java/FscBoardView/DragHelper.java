@@ -1,4 +1,4 @@
-package drag;
+package FscBoardView;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,11 +18,6 @@ import com.woxthebox.draglistview.sample.R;
 
 import java.util.Timer;
 import java.util.TimerTask;
-
-import board.PagerRecyclerView;
-import board.ProjectTaskBoardActivity;
-import board.RecyclerViewListsAdapter;
-import board.RecyclerViewTasksAdapter;
 
 public class DragHelper {
     private static final int HORIZONTAL_SCROLL_PERIOD = 40;
@@ -59,7 +54,7 @@ public class DragHelper {
         this.mWindowParams = new LayoutParams();
         this.mWindowParams.type = 2;
         this.mWindowParams.flags = 262944;
-        this.mWindowParams.alpha = ProjectTaskBoardActivity.FULL_SCALE;
+        this.mWindowParams.alpha = ServiceStageBoardActivity.FULL_SCALE;
         this.mWindowParams.format = -3;
         this.mWindowParams.width = -2;
         this.mWindowParams.height = -2;
@@ -97,7 +92,8 @@ public class DragHelper {
         if (bitmap != null && !bitmap.isRecycled()) {
             this.mDragImageView.setImageBitmap(bitmap);
             this.mDragImageView.setRotation(1.5f);
-            this.mDragImageView.setAlpha(0.8f);
+            this.mDragImageView.setAlpha(0.9f);
+//            this.mDragImageView.setBackgroundColor(Color.parseColor("#F2F2F2"));
             this.isDragging = true;
             this.tag = dragger.getTag();
             int dragPage = this.mHorizontalRecyclerView.getCurrentPosition();
